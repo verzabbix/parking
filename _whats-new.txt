@@ -1,7 +1,5 @@
-06 - Update Not Create
-----------------------
+07 - Error Handling
+-------------------
 
-- Updates shall happen seamlessly.
-- Just-in-time content modification.
-- Widget might customize contents resetting routine.
-- The dashboard framework automates the views when using dynamic configuration.
+- Errors will happen at any stage, treat the exceptions.
+- Widget can implement different views, like the dedicated "No data" view.

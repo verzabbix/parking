@@ -6,6 +6,20 @@
 class FuturePark extends CWidget {
 
 	/**
+	 * Maximum supported rows of the parking lot.
+	 *
+	 * @type {number}
+	 */
+	static MAX_ROWS = 10;
+
+	/**
+	 * Maximum supported columns of the parking lot.
+	 *
+	 * @type {number}
+	 */
+	static MAX_COLUMNS = 10;
+
+	/**
 	 * Number of rows in the parking lot.
 	 *
 	 * @type {number}
@@ -44,31 +58,45 @@ class FuturePark extends CWidget {
 		// Maximum free time allowed.
 		const max_free_time = timeUnitToSeconds(fields_data.max_free_time, false);
 
-		const {lot_data, rows, columns} = await this.#fetchLotData(groupid);
+		try {
+			const {lot_data, rows, columns} = await this.#fetchLotData(groupid);
 
-		// Fetch latest data ("license_plate" items) of the parking spots.
-		const lot_current_state = await this.#fetchLotCurrentState({
-			hostids: [...lot_data.keys()]
-		});
+			// No parking spots found?
+			if (lot_data.size === 0) {
+				this.#showNoDataFound();
 
-		// Create new grid or reuse the existing one to prevent flickering.
-		if (this.#rows !== rows || this.#columns !== columns) {
-			this.#rows = rows;
-			this.#columns = columns;
+				return;
+			}
 
-			this.#createLot(rows, columns);
+			// Fetch latest data ("license_plate" items) of the parking spots.
+			const lot_current_state = await this.#fetchLotCurrentState({
+				hostids: [...lot_data.keys()]
+			});
+
+			// Create new grid or reuse the existing one to prevent flickering.
+			if (this.#rows !== rows || this.#columns !== columns) {
+				this.#rows = rows;
+				this.#columns = columns;
+
+				this.#createLot(rows, columns);
+			}
+
+			// Current Unix timestamp.
+			const now_ts = Math.floor(Date.now() / 1000);
+
+			// Iterate over the parking spots.
+			for (const {lastvalue, lastclock, hostid} of lot_current_state.values()) {
+				const spot_data = lot_data.get(hostid);
+
+				this.#updateSpot(spot_data.row, spot_data.column, {
+					license_plate: lastvalue,
+					is_overtime: lastvalue !== '' && now_ts - lastclock > max_free_time
+				});
+			}
 		}
-
-		// Current Unix timestamp.
-		const now_ts = Math.floor(Date.now() / 1000);
-
-		// Iterate over the parking spots.
-		for (const {lastvalue, lastclock, hostid} of lot_current_state.values()) {
-			const spot_data = lot_data.get(hostid);
-
-			this.#updateSpot(spot_data.row, spot_data.column, {
-				license_plate: lastvalue,
-				is_overtime: lastvalue !== '' && now_ts - lastclock > max_free_time
+		catch (exception) {
+			this.processUpdateErrorResponse({
+				title: exception.message
 			});
 		}
 	}
@@ -93,18 +121,36 @@ class FuturePark extends CWidget {
 			selectMacros: ['macro', 'value']
 		});
 
-		const macros = response.result[0].macros;
+		// No parking spots found? Return early.
+		if (response.result.length === 0) {
+			return {
+				lot_data: new Map(),
+				rows: 0,
+				columns: 0
+			};
+		}
+
+		const macros = response.result[0].macros || [];
 
 		// Fetch the parking lot size out of the user macros of the first found parking lot.
-		const rows = Number(macros.find(macro => macro.macro === '{$ROWS}').value);
-		const columns = Number(macros.find(macro => macro.macro === '{$COLUMNS}').value);
+		const rows = Number(macros.find(macro => macro.macro === '{$ROWS}')?.value || 0);
+		const columns = Number(macros.find(macro => macro.macro === '{$COLUMNS}')?.value || 0);
+
+		// No parking lot size defined? Return early.
+		if (rows < 1 || columns < 1 || rows > FuturePark.MAX_ROWS || columns > FuturePark.MAX_COLUMNS) {
+			throw new Error('Error: Parking lot size is out of bounds!');
+		}
 
 		const lot_data = new Map();
 
 		for (const spot of response.result) {
 			// Fetch the parking spot coordinates out of the tags.
-			const row = Number(spot.tags.find(tag => tag.tag === 'row').value);
-			const column = Number(spot.tags.find(tag => tag.tag === 'column').value);
+			const row = Number(spot.tags.find(tag => tag.tag === 'row')?.value || 0);
+			const column = Number(spot.tags.find(tag => tag.tag === 'column')?.value || 0);
+
+			if (row < 1 || row > rows || column < 1 || column > columns) {
+				throw new Error('Error: Parking spot coordinates are out of bounds!');
+			}
 
 			lot_data.set(spot.hostid, {row, column});
 		}
@@ -198,6 +244,24 @@ class FuturePark extends CWidget {
 
 		spot.license_plate.textContent = license_plate;
 		spot.license_plate.hidden = license_plate === '';
+	}
+
+	/**
+	 * Show a no-data message and clear the previously displayed contents.
+	 */
+	#showNoDataFound() {
+		// Calling this method will also invoke the onClearContents method.
+		this.clearContents();
+
+		const message_wrapper = document.createElement('div');
+
+		// Display the standard no-data message.
+		message_wrapper.textContent = 'No data found';
+
+		// Use standard classes to specify the look of the message.
+		message_wrapper.classList.add(ZBX_STYLE_NO_DATA_MESSAGE, ZBX_ICON_SEARCH_LARGE);
+
+		this._body.appendChild(message_wrapper);
 	}
 
 	/**
