@@ -1,12 +1,7 @@
-05 - Overtime and Custom Field
-------------------------------
+06 - Update Not Create
+----------------------
 
-- Zabbix JavaScript functions can be used.
-- Custom PHP widget fields can be implemented.
-- The PHP form is required for custom fields.
-- The PHP form is highly customizable.
-- The PHP form works with the individual PHP widget fields.
-- The PHP form consists of the data logic (WidgetForm.php) and the presentation (widget.edit.js).
-- The individual PHP widget fields consist of the data logic and the presentation too.
-- The PHP form data logic works with the widget field data logic.
-- The PHP form presentation works with the presentation of the individual widget fields.
+- Updates shall happen seamlessly.
+- Just-in-time content modification.
+- Widget might customize contents resetting routine.
+- The dashboard framework automates the views when using dynamic configuration.

@@ -6,6 +6,19 @@
 class FuturePark extends CWidget {
 
 	/**
+	 * Number of rows in the parking lot.
+	 *
+	 * @type {number}
+	 */
+	#rows = 0;
+
+	/** Number of columns in the parking lot.
+	 *
+	 * @type {number}
+	 */
+	#columns = 0;
+
+	/**
 	 * Individual grid spot elements of the parking lot.
 	 *
 	 * @type {Object}
@@ -38,7 +51,13 @@ class FuturePark extends CWidget {
 			hostids: [...lot_data.keys()]
 		});
 
-		this.#createLot(rows, columns);
+		// Create new grid or reuse the existing one to prevent flickering.
+		if (this.#rows !== rows || this.#columns !== columns) {
+			this.#rows = rows;
+			this.#columns = columns;
+
+			this.#createLot(rows, columns);
+		}
 
 		// Current Unix timestamp.
 		const now_ts = Math.floor(Date.now() / 1000);
@@ -179,6 +198,17 @@ class FuturePark extends CWidget {
 
 		spot.license_plate.textContent = license_plate;
 		spot.license_plate.hidden = license_plate === '';
+	}
+
+	/**
+	 * Intercept the clear-contents event.
+	 *
+	 * Resets the state as if the grid was never displayed.
+	 */
+	onClearContents() {
+		this.#rows = 0;
+		this.#columns = 0;
+		this.#spots = {};
 	}
 
 	/**
