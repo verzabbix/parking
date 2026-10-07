@@ -28,6 +28,9 @@ class FuturePark extends CWidget {
 		// Get the ID of the host group containing all the parking spots as hosts (IDs always have a type of array).
 		const groupid = fields_data.groupid[0];
 
+		// Maximum free time allowed.
+		const max_free_time = timeUnitToSeconds(fields_data.max_free_time, false);
+
 		const {lot_data, rows, columns} = await this.#fetchLotData(groupid);
 
 		// Fetch latest data ("license_plate" items) of the parking spots.
@@ -37,12 +40,16 @@ class FuturePark extends CWidget {
 
 		this.#createLot(rows, columns);
 
+		// Current Unix timestamp.
+		const now_ts = Math.floor(Date.now() / 1000);
+
 		// Iterate over the parking spots.
-		for (const {lastvalue, hostid} of lot_current_state.values()) {
+		for (const {lastvalue, lastclock, hostid} of lot_current_state.values()) {
 			const spot_data = lot_data.get(hostid);
 
 			this.#updateSpot(spot_data.row, spot_data.column, {
-				license_plate: lastvalue
+				license_plate: lastvalue,
+				is_overtime: lastvalue !== '' && now_ts - lastclock > max_free_time
 			});
 		}
 	}
@@ -96,7 +103,7 @@ class FuturePark extends CWidget {
 	async #fetchLotCurrentState({hostids}) {
 		const response = await ApiCall('item.get', {
 			hostids,
-			output: ['itemid', 'hostid', 'lastvalue'],
+			output: ['itemid', 'hostid', 'lastvalue', 'lastclock'],
 			filter: {
 				key_: ['license_plate']
 			}
@@ -107,6 +114,7 @@ class FuturePark extends CWidget {
 		for (const item of response.result) {
 			current_state.set(item.itemid, {
 				lastvalue: item.lastvalue,
+				lastclock: item.lastclock,
 				hostid: item.hostid
 			});
 		}
@@ -160,9 +168,12 @@ class FuturePark extends CWidget {
 	 * @param {number}  row            The parking spot row index.
 	 * @param {number}  column         The parking spot column index.
 	 * @param {string}  license_plate  The license plate of the currently parked car (or empty string).
+	 * @param {boolean} is_overtime    Whether the parking time has exceeded the limit.
 	 */
-	#updateSpot(row, column, {license_plate}) {
+	#updateSpot(row, column, {license_plate, is_overtime}) {
 		const spot = this.#spots[`${row}-${column}`];
+
+		spot.cell.classList.toggle('overtime', is_overtime);
 
 		spot.car.hidden = license_plate === '';
 

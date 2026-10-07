@@ -30,6 +30,9 @@ div.dashboard-widget-future_park .cell {
 	font-size: 1.2em;
 	background-color: #fff;
 }
+div.dashboard-widget-future_park .cell.overtime {
+	background-color: #fcdada;
+}
 div.dashboard-widget-future_park .cell img.car {
 	width: 100%;
 	height: 100%;
