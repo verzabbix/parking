@@ -1,0 +1,51 @@
+<svg width="160" height="160" viewBox="0 0 160 160"
+     xmlns="http://www.w3.org/2000/svg">
+
+  <!-- Car body -->
+  <rect x="35" y="10" width="90" height="140" rx="18"
+        fill="#808080"
+        stroke="#222"
+        stroke-width="4"/>
+
+  <!-- Front windshield -->
+  <path d="
+    M 45 48
+    L 50 28
+    Q 52 20 60 20
+    L 100 20
+    Q 108 20 110 28
+    L 115 48
+    Z"
+    fill="#c0c0c0"
+    stroke="#222"
+    stroke-width="3"/>
+
+  <!-- Rear window -->
+  <path d="
+    M 45 112
+    L 115 112
+    L 110 132
+    Q 108 140 100 140
+    L 60 140
+    Q 52 140 50 132
+    Z"
+    fill="#c0c0c0"
+    stroke="#222"
+    stroke-width="3"/>
+
+  <!-- Wheels -->
+  <rect x="27" y="42" width="14" height="30" rx="5" fill="#222"/>
+  <rect x="119" y="42" width="14" height="30" rx="5" fill="#222"/>
+
+  <rect x="27" y="88" width="14" height="30" rx="5" fill="#222"/>
+  <rect x="119" y="88" width="14" height="30" rx="5" fill="#222"/>
+
+  <!-- Headlights -->
+  <rect x="48" y="13" width="20" height="7" rx="3" fill="#eee"/>
+  <rect x="92" y="13" width="20" height="7" rx="3" fill="#eee"/>
+
+  <!-- Tail lights -->
+  <rect x="48" y="140" width="20" height="7" rx="3" fill="#666"/>
+  <rect x="92" y="140" width="20" height="7" rx="3" fill="#666"/>
+
+</svg>

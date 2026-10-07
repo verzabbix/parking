@@ -6,5 +6,12 @@
 	"namespace": "FuturePark",
 	"version": "1.0",
 	"author": "Future Inc.",
-	"description": "Displays parking space occupancy in a parking lot."
+	"description": "Displays parking space occupancy in a parking lot.",
+	"widget": {
+		"js_class": "FuturePark"
+	},
+	"assets": {
+		"js": ["class.widget.js"],
+		"css": ["widget.css"]
+	}
 }

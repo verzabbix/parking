@@ -1,0 +1,40 @@
+/*
+	div.dashboard-widget-{Widget ID from the manifest file}
+	- For addressing the presentation of the widget.
+
+	form.dashboard-widget-{Widget ID from the manifest file}
+	- For addressing the configuration form of the widget.
+*/
+div.dashboard-widget-future_park .grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: repeat(3, 1fr);
+	gap: 1px;
+	width: 100%;
+	height: 100%;
+	background-color: #eee;
+}
+div.dashboard-widget-future_park .cell {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-width: 0;
+	min-height: 0;
+	padding: 5px 30px 10px 30px;
+	gap: 5px;
+	position: relative;
+	font-size: 1.2em;
+	background-color: #fff;
+}
+div.dashboard-widget-future_park .cell img.car {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	opacity: .25;
+}
+div.dashboard-widget-future_park .cell .licence-plate {
+	border-radius: 3px;
+	padding: 2px 15px;
+	background-color: #eee;
+}

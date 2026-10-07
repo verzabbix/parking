@@ -1,8 +1,14 @@
-01 - Hello World!
------------------
+02 - JavaScript Widget and Assets
+---------------------------------
 
-- Widget is a module.
-- Module is a directory under the ui/modules folder.
-- Only a manifest file is required to run a widget.
-
-https://www.zabbix.com/documentation/current/en/devel/modules/file_structure/manifest
+- Widget can be written purely in JavaScript.
+- Widget is fully encapsulated as a class instance.
+- Custom JavaScript class must be mentioned in the manifest file.
+- Base JavaScript classes provide convenience.
+- Base JavaScript classes define the default functionality.
+- Widget is controlled by the dashboard framework.
+- Widget is updated on demand by the framework.
+- Promise-based visualization.
+- Assets must be defined in the manifest file.
+- Widget is presented in either text or full-size mode.
+- Convention on specifying the CSS rules for widget presentation and configuration form.
