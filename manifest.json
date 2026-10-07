@@ -1,0 +1,10 @@
+{
+	"manifest_version": 2.0,
+	"id": "future_park",
+	"type": "widget",
+	"name": "Future Parking",
+	"namespace": "FuturePark",
+	"version": "1.0",
+	"author": "Future Inc.",
+	"description": "Displays parking space occupancy in a parking lot."
+}

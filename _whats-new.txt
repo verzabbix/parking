@@ -1,0 +1,8 @@
+01 - Hello World!
+-----------------
+
+- Widget is a module.
+- Module is a directory under the ui/modules folder.
+- Only a manifest file is required to run a widget.
+
+https://www.zabbix.com/documentation/current/en/devel/modules/file_structure/manifest
