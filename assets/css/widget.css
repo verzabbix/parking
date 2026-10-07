@@ -1,4 +1,25 @@
 /*
+	Customize colors for different color schemes and themes.
+ */
+[color-scheme="light"] div.dashboard-widget-future_park {
+	--grid-bg-color: #eee;
+	--cell-bg-color: #fff;
+	--overtime-bg-color: #fcdada;
+	--licence-plate-bg-color: #eee;
+	--occupancy-bg-color: #eee;
+}
+[color-scheme="dark"] div.dashboard-widget-future_park {
+	--grid-bg-color: transparent;
+	--cell-bg-color: rgba(0,0,0, .25);
+	--overtime-bg-color: #684646;
+	--licence-plate-bg-color: #333;
+	--occupancy-bg-color: #333;
+}
+[theme="dark-blue-theme"] div.dashboard-widget-future_park {
+	--overtime-bg-color: #4a3e56;
+}
+
+/*
 	div.dashboard-widget-{Widget ID from the manifest file}
 	- For addressing the presentation of the widget.
 
@@ -15,7 +36,7 @@ div.dashboard-widget-future_park .grid {
 	gap: 1px;
 	width: 100%;
 	height: 100%;
-	background-color: #eee;
+	background-color: var(--grid-bg-color);
 }
 div.dashboard-widget-future_park .cell {
 	display: flex;
@@ -28,10 +49,10 @@ div.dashboard-widget-future_park .cell {
 	gap: 5px;
 	position: relative;
 	font-size: 1.2em;
-	background-color: #fff;
+	background-color: var(--cell-bg-color);
 }
 div.dashboard-widget-future_park .cell.overtime {
-	background-color: #fcdada;
+	background-color: var(--overtime-bg-color);
 }
 div.dashboard-widget-future_park .cell img.car {
 	width: 100%;
@@ -42,7 +63,7 @@ div.dashboard-widget-future_park .cell img.car {
 div.dashboard-widget-future_park .cell .licence-plate {
 	border-radius: 3px;
 	padding: 2px 15px;
-	background-color: #eee;
+	background-color: var(--licence-plate-bg-color);
 }
 div.dashboard-widget-future_park .cell .occupancy {
 	position: absolute;
@@ -50,7 +71,7 @@ div.dashboard-widget-future_park .cell .occupancy {
 	right: 0;
 	padding: 5px;
 	text-align: center;
-	background-color: #eee;
+	background-color: var(--occupancy-bg-color);
 	border-top-left-radius: 3px;
 	border-bottom-left-radius: 3px;
 }
