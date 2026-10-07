@@ -8,7 +8,13 @@
 	"author": "Future Inc.",
 	"description": "Displays parking space occupancy in a parking lot.",
 	"widget": {
-		"js_class": "FuturePark"
+		"js_class": "FuturePark",
+        "in": {
+			"groupid": {
+				"type": "_hostgroupid",
+				"required": true
+			}
+		}
 	},
 	"assets": {
 		"js": ["class.widget.js"],

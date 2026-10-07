@@ -6,9 +6,12 @@
 	- For addressing the configuration form of the widget.
 */
 div.dashboard-widget-future_park .grid {
+	--columns: 0;
+	--rows: 0;
+
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	grid-template-rows: repeat(3, 1fr);
+	grid-template-columns: repeat(var(--columns), 1fr);
+	grid-template-rows: repeat(var(--rows), 1fr);
 	gap: 1px;
 	width: 100%;
 	height: 100%;

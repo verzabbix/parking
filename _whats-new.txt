@@ -1,14 +1,10 @@
-02 - JavaScript Widget and Assets
----------------------------------
+03 - First API Call
+-------------------
 
-- Widget can be written purely in JavaScript.
-- Widget is fully encapsulated as a class instance.
-- Custom JavaScript class must be mentioned in the manifest file.
-- Base JavaScript classes provide convenience.
-- Base JavaScript classes define the default functionality.
-- Widget is controlled by the dashboard framework.
-- Widget is updated on demand by the framework.
-- Promise-based visualization.
-- Assets must be defined in the manifest file.
-- Widget is presented in either text or full-size mode.
-- Convention on specifying the CSS rules for widget presentation and configuration form.
+- ZABBIX API can be accessed from the JavaScript.
+- ZABBIX API is based on Promises.
+- ZABBIX API request format is similar to the PHP's version.
+- ID type fields coming from the configuration are always arrays.
+- The dashboard framework automates the views when using dynamic configuration.
+
+https://www.zabbix.com/documentation/current/en/manual/api/reference/host/get
