@@ -1,10 +1,6 @@
-03 - First API Call
--------------------
+04 - Display Real Data
+----------------------
 
-- ZABBIX API can be accessed from the JavaScript.
-- ZABBIX API is based on Promises.
-- ZABBIX API request format is similar to the PHP's version.
-- ID type fields coming from the configuration are always arrays.
-- The dashboard framework automates the views when using dynamic configuration.
+- Chained API calls.
 
-https://www.zabbix.com/documentation/current/en/manual/api/reference/host/get
+https://www.zabbix.com/documentation/current/en/manual/api/reference/item/get
