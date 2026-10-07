@@ -1,0 +1,21 @@
+zabbix_export:
+  version: '8.0'
+  host_groups:
+    - uuid: 6f6799aa69e844b4b3918f779f2abf08
+      name: 'Zabbix servers'
+  hosts:
+    - host: 'My parking lot'
+      name: 'My parking lot'
+      templates:
+        - name: 'My parking lot generator'
+      groups:
+        - name: 'Zabbix servers'
+      macros:
+        - macro: '{$COLUMNS}'
+          value: '5'
+        - macro: '{$GROUP}'
+          value: 'My parking lot'
+        - macro: '{$NAME}'
+          value: 'My parking spot'
+        - macro: '{$ROWS}'
+          value: '3'

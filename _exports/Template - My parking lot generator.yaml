@@ -1,0 +1,89 @@
+zabbix_export:
+  version: '8.0'
+  template_groups:
+    - uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  host_groups:
+    - uuid: f2481361f99448eea617b7b1d4765566
+      name: 'Discovered hosts'
+  templates:
+    - uuid: 49c5a2b756c84d119f0b775592c354ef
+      template: 'My parking lot generator'
+      name: 'My parking lot generator'
+      groups:
+        - name: Templates
+      items:
+        - uuid: 359d649546b246ad963ac9bacb56b5b1
+          name: 'Occupancy percentage'
+          type: CALCULATED
+          key: occupancy
+          value_type: FLOAT
+          units: '%'
+          params: 'sum(last_foreach(/*/is_occupied?[group="{$GROUP}"])) / {$ROWS} / {$COLUMNS} * 100'
+        - uuid: 773cf8d4909943e29c962d58eb288d83
+          name: 'Total number of spots'
+          type: CALCULATED
+          key: spots.count
+          params: '{$ROWS}*{$COLUMNS}'
+        - uuid: f818cc38bd50443686e8917d8919c1ab
+          name: 'Occupied spots'
+          type: CALCULATED
+          key: spots.occupied
+          params: 'sum(last_foreach(/*/is_occupied?[group="{$GROUP}"]))'
+      discovery_rules:
+        - uuid: 158dd71f33fd4b94af7648fafbbc70f8
+          name: 'Parking spots'
+          type: SCRIPT
+          key: parking.spots
+          delay: 1h
+          params: |
+            const params = JSON.parse(value);
+            
+            const result = [];
+            
+            for (row = 1; row <= params.rows; row++) {
+            	for (column = 1; column <= params.columns; column++) {
+            		result.push({
+            			'{#GROUP}': params.group,
+            			'{#NAME}': params.name,
+            			'{#ROW}': row,
+            			'{#COLUMN}': column
+            		});
+            	}
+            }
+            
+            return JSON.stringify(result);
+          host_prototypes:
+            - uuid: e4e9f95707ef4adcb2a90fd9e3d94dd4
+              host: '{#NAME} {#ROW}-{#COLUMN}'
+              name: '{#NAME} {#ROW}-{#COLUMN}'
+              group_links:
+                - group:
+                    name: 'Discovered hosts'
+              group_prototypes:
+                - name: '{#GROUP}'
+              templates:
+                - name: 'My parking spot'
+              tags:
+                - tag: column
+                  value: '{#COLUMN}'
+                - tag: row
+                  value: '{#ROW}'
+          parameters:
+            - name: columns
+              value: '{$COLUMNS}'
+            - name: group
+              value: '{$GROUP}'
+            - name: name
+              value: '{$NAME}'
+            - name: rows
+              value: '{$ROWS}'
+      macros:
+        - macro: '{$COLUMNS}'
+          value: '0'
+        - macro: '{$GROUP}'
+          value: 'My parking lot'
+        - macro: '{$NAME}'
+          value: 'My parking spot'
+        - macro: '{$ROWS}'
+          value: '0'

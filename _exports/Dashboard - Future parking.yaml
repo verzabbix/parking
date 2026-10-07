@@ -1,0 +1,136 @@
+zabbix_export:
+  version: '8.0'
+  dashboards:
+    - name: 'Future parking'
+      pages:
+        - widgets:
+            - type: hostnavigator
+              name: Spots
+              width: '10'
+              height: '10'
+              fields:
+                - type: GROUP
+                  name: groupids.0
+                  value:
+                    name: 'My parking lot'
+                - type: STRING
+                  name: reference
+                  value: MGFMU
+            - type: svggraph
+              name: 'Selected spot occupancy'
+              x: '10'
+              width: '27'
+              height: '3'
+              fields:
+                - type: INTEGER
+                  name: ds.0.approximation
+                  value: '4'
+                - type: INTEGER
+                  name: ds.0.color_palette
+                  value: '0'
+                - type: STRING
+                  name: ds.0.hosts.0
+                  value: 'My parking spot 1-1'
+                - type: STRING
+                  name: ds.0.items.0
+                  value: 'Parking spot occupancy'
+                - type: INTEGER
+                  name: ds.0.missingdatafunc
+                  value: '1'
+                - type: STRING
+                  name: ds.0.override_hostid._reference
+                  value: MGFMU._hostid
+                - type: INTEGER
+                  name: ds.0.type
+                  value: '2'
+                - type: INTEGER
+                  name: lefty
+                  value: '0'
+                - type: INTEGER
+                  name: legend
+                  value: '0'
+                - type: STRING
+                  name: reference
+                  value: VELZC
+                - type: INTEGER
+                  name: righty
+                  value: '0'
+            - type: itemhistory
+              name: 'Selected spot history'
+              x: '10'
+              'y': '3'
+              width: '27'
+              height: '4'
+              fields:
+                - type: INTEGER
+                  name: columns.0.display
+                  value: '5'
+                - type: ITEM
+                  name: columns.0.itemid
+                  value:
+                    host: 'My parking spot 1-1'
+                    key: license_plate
+                - type: INTEGER
+                  name: columns.0.monospace_font
+                  value: '1'
+                - type: STRING
+                  name: columns.0.name
+                  value: 'My parking spot 1-1: Vehicle license plate'
+                - type: STRING
+                  name: override_hostid._reference
+                  value: MGFMU._hostid
+                - type: STRING
+                  name: reference
+                  value: YEPTP
+                - type: INTEGER
+                  name: show_column_header
+                  value: '1'
+                - type: INTEGER
+                  name: show_timestamp
+                  value: '1'
+            - type: svggraph
+              name: 'Total occupancy'
+              x: '10'
+              'y': '7'
+              width: '27'
+              height: '3'
+              fields:
+                - type: INTEGER
+                  name: ds.0.color_palette
+                  value: '0'
+                - type: STRING
+                  name: ds.0.hosts.0
+                  value: 'My parking lot'
+                - type: STRING
+                  name: ds.0.items.0
+                  value: 'Occupancy percentage'
+                - type: INTEGER
+                  name: ds.0.type
+                  value: '3'
+                - type: STRING
+                  name: lefty_max
+                  value: '100'
+                - type: STRING
+                  name: lefty_min
+                  value: '0'
+                - type: INTEGER
+                  name: legend
+                  value: '0'
+                - type: STRING
+                  name: reference
+                  value: SSMRM
+                - type: INTEGER
+                  name: righty
+                  value: '0'
+            - type: future_park
+              x: '37'
+              width: '35'
+              height: '10'
+              fields:
+                - type: GROUP
+                  name: groupid.0
+                  value:
+                    name: 'My parking lot'
+                - type: STRING
+                  name: max_free_time
+                  value: 5m

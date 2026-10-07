@@ -1,0 +1,38 @@
+zabbix_export:
+  version: '8.0'
+  template_groups:
+    - uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+  templates:
+    - uuid: f754285f078c4b03b549d603e5ad490e
+      template: 'My parking spot'
+      name: 'My parking spot'
+      groups:
+        - name: Templates
+      items:
+        - uuid: 0847b6820ce64488b1bbb8b035c4fe3f
+          name: 'Parking spot occupancy'
+          type: DEPENDENT
+          key: is_occupied
+          valuemap:
+            name: Occupancy
+          preprocessing:
+            - type: JAVASCRIPT
+              parameters:
+                - 'return value !== '''' ? 1 : 0;'
+          master_item:
+            key: license_plate
+        - uuid: bb68601ef4ea4cbf808a198ad2c9acbe
+          name: 'Vehicle license plate'
+          type: TRAP
+          key: license_plate
+          value_type: CHAR
+          allowed_hosts: '{$TRAPPER.ALLOWED_HOSTS}'
+      valuemaps:
+        - uuid: 95f3aea02b7c40c8b0c1560467a0c37d
+          name: Occupancy
+          mappings:
+            - value: '1'
+              newvalue: 'Yes'
+            - value: '0'
+              newvalue: 'No'
