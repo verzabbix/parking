@@ -13,6 +13,10 @@
 			"groupid": {
 				"type": "_hostgroupid",
 				"required": true
+			},
+			"time_period": {
+				"type": "_timeperiod",
+				"required": true
 			}
 		}
 	},

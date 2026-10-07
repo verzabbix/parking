@@ -16,4 +16,10 @@
 			->setPlaceholder(_('1h'))
 			->setWidth(ZBX_TEXTAREA_TINY_WIDTH)
 	)
+	->addField(
+		(new CWidgetFieldTimePeriodView($data['fields']['time_period']))
+			->setDateFormat(ZBX_FULL_DATE_TIME)
+			->setFromPlaceholder(_('YYYY-MM-DD hh:mm:ss'))
+			->setToPlaceholder(_('YYYY-MM-DD hh:mm:ss'))
+	)
 	->show();

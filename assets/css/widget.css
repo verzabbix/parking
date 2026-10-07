@@ -44,3 +44,13 @@ div.dashboard-widget-future_park .cell .licence-plate {
 	padding: 2px 15px;
 	background-color: #eee;
 }
+div.dashboard-widget-future_park .cell .occupancy {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 5px;
+	text-align: center;
+	background-color: #eee;
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+}

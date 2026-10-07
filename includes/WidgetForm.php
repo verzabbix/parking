@@ -8,8 +8,11 @@ use Zabbix\Widgets\{
 };
 
 use Zabbix\Widgets\Fields\{
-	CWidgetFieldMultiSelectGroup
+	CWidgetFieldMultiSelectGroup,
+	CWidgetFieldTimePeriod
 };
+
+use CWidgetsData;
 
 /**
  * Custom configuration class for the Future Parking widget.
@@ -37,6 +40,20 @@ class WidgetForm extends CWidgetForm {
 				// Add a free time input field to the configuration.
 				(new CFutureParkTimeBox('max_free_time', _('Maximum free time')))
 					->setDefault('1h')
+					// Make the field mandatory.
+					->setFlags(CWidgetField::FLAG_NOT_EMPTY | CWidgetField::FLAG_LABEL_ASTERISK)
+			)
+			->addField(
+				// Add a time period selection field to the configuration.
+				(new CWidgetFieldTimePeriod('time_period', _('Occupancy time period')))
+					// Configure the field for taking the time period from the dashboard time selector by default.
+					->setDefault([
+						CWidgetField::FOREIGN_REFERENCE_KEY => CWidgetField::createTypedReference(
+							CWidgetField::REFERENCE_DASHBOARD, CWidgetsData::DATA_TYPE_TIME_PERIOD
+						)
+					])
+					// Configure the default time period if the user chooses to enter the exact time period.
+					->setDefaultPeriod(['from' => 'now/d', 'to' => 'now'])
 					// Make the field mandatory.
 					->setFlags(CWidgetField::FLAG_NOT_EMPTY | CWidgetField::FLAG_LABEL_ASTERISK)
 			);

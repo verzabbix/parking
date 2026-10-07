@@ -1,5 +1,8 @@
-07 - Error Handling
--------------------
+08 - Time Periods and History
+-----------------------------
 
-- Errors will happen at any stage, treat the exceptions.
-- Widget can implement different views, like the dedicated "No data" view.
+- Standard time period field is added in the manifest file.
+- Having a time period field will activate a time period selector on the dashboard.
+- Time period format contains "from", "to", "from_ts" and "to_ts" fields.
+- Predefined constants can be used.
+- Multiple API calls can be chained.

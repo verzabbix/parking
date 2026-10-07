@@ -58,6 +58,9 @@ class FuturePark extends CWidget {
 		// Maximum free time allowed.
 		const max_free_time = timeUnitToSeconds(fields_data.max_free_time, false);
 
+		// Time period object, containing "from", "to", "from_ts" and "to_ts" keys.
+		const time_period = fields_data.time_period;
+
 		try {
 			const {lot_data, rows, columns} = await this.#fetchLotData(groupid);
 
@@ -73,6 +76,13 @@ class FuturePark extends CWidget {
 				hostids: [...lot_data.keys()]
 			});
 
+			// Fetch history data ("license_plate" items) of the parking spots per time period.
+			const lot_history = await this.#fetchLotHistory({
+				itemids: [...lot_current_state.keys()],
+				from_ts: time_period.from_ts,
+				to_ts: time_period.to_ts
+			});
+
 			// Create new grid or reuse the existing one to prevent flickering.
 			if (this.#rows !== rows || this.#columns !== columns) {
 				this.#rows = rows;
@@ -85,12 +95,37 @@ class FuturePark extends CWidget {
 			const now_ts = Math.floor(Date.now() / 1000);
 
 			// Iterate over the parking spots.
-			for (const {lastvalue, lastclock, hostid} of lot_current_state.values()) {
+			for (const [itemid, {lastvalue, lastclock, hostid}] of lot_current_state) {
 				const spot_data = lot_data.get(hostid);
+				const spot_history = lot_history.get(itemid);
+
+				// Calculate the occupancy percentage in the given time period.
+
+				let occupancy = '';
+
+				if (spot_history.length > 0) {
+					// Assume the last known state at the current timestamp.
+					spot_history.push({
+						clock: time_period.to_ts,
+						value: spot_history.at(-1).value
+					});
+
+					let time_occupied = 0;
+
+					for (let i = 0; i < spot_history.length - 1; i++) {
+						if (spot_history[i].value !== '') {
+							time_occupied += spot_history[i + 1].clock - spot_history[i].clock;
+						}
+					}
+
+					// Exclude the time period before the first known event during the requested time period.
+					occupancy = Math.round(time_occupied / (time_period.to_ts - spot_history[0].clock) * 100) + '%';
+				}
 
 				this.#updateSpot(spot_data.row, spot_data.column, {
 					license_plate: lastvalue,
-					is_overtime: lastvalue !== '' && now_ts - lastclock > max_free_time
+					is_overtime: lastvalue !== '' && now_ts - lastclock > max_free_time,
+					occupancy
 				});
 			}
 		}
@@ -188,6 +223,47 @@ class FuturePark extends CWidget {
 	}
 
 	/**
+	 * Fetch the history data ("license_plate") of the parking spots.
+	 *
+	 * @param {Array<string>} itemids
+	 * @param {number} from_ts         Beginning of the history period.
+	 * @param {number} to_ts           End of the history period.
+	 *
+	 * @returns {Promise<Map<string, Object>>}
+	 */
+	async #fetchLotHistory({itemids, from_ts, to_ts}) {
+		const response = await ApiCall('history.get', {
+			// Use inline constant instead of numbers.
+			history: ITEM_VALUE_TYPE_STR,
+			// Retrieve the history data for the specified items and the time period.
+			itemids,
+			time_from: from_ts,
+			time_till: to_ts,
+			output: ['itemid', 'value', 'clock'],
+			// Sort the data by the clock.
+			sortfield: 'clock',
+			sortorder: 'ASC'
+		});
+
+		const history = new Map();
+
+		for (const itemid of itemids) {
+			history.set(itemid, []);
+		}
+
+		for (const record of response.result) {
+			const item_history = history.get(record.itemid);
+
+			item_history.push({
+				clock: parseInt(record.clock),
+				value: record.value
+			});
+		}
+
+		return history;
+	}
+
+	/**
 	 * Create new reusable grid for the parking spots of the given size.
 	 *
 	 * @param {number} rows
@@ -218,9 +294,14 @@ class FuturePark extends CWidget {
 				license_plate.hidden = true;
 				cell.appendChild(license_plate);
 
+				const occupancy = document.createElement('div');
+				occupancy.classList.add('occupancy');
+				occupancy.textContent = '-';
+				cell.appendChild(occupancy);
+
 				grid.appendChild(cell);
 
-				this.#spots[`${row}-${column}`] = {cell, car, license_plate};
+				this.#spots[`${row}-${column}`] = {cell, car, license_plate, occupancy};
 			}
 		}
 
@@ -234,8 +315,9 @@ class FuturePark extends CWidget {
 	 * @param {number}  column         The parking spot column index.
 	 * @param {string}  license_plate  The license plate of the currently parked car (or empty string).
 	 * @param {boolean} is_overtime    Whether the parking time has exceeded the limit.
+	 * @param {string}  occupancy      The occupancy percentage of this parking spot.
 	 */
-	#updateSpot(row, column, {license_plate, is_overtime}) {
+	#updateSpot(row, column, {license_plate, is_overtime, occupancy}) {
 		const spot = this.#spots[`${row}-${column}`];
 
 		spot.cell.classList.toggle('overtime', is_overtime);
@@ -244,6 +326,9 @@ class FuturePark extends CWidget {
 
 		spot.license_plate.textContent = license_plate;
 		spot.license_plate.hidden = license_plate === '';
+
+		spot.occupancy.textContent = occupancy;
+		spot.occupancy.hidden = occupancy === '';
 	}
 
 	/**
